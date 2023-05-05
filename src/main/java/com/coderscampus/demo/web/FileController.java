@@ -23,9 +23,6 @@ public class FileController {
     @Value("${superuser.name}")
     private String superuserName;
 
-
-
-
     @Autowired
     private FileService fileService;
 
@@ -34,8 +31,6 @@ public class FileController {
         System.out.println(superuserUsername);
         System.out.println(superuserPassword);
         System.out.println(superuserName);
-
-
 
         return fileService.readFile("recipe.txt");
     }
