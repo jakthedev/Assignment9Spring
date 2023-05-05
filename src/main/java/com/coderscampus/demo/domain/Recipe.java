@@ -76,6 +76,24 @@ public class Recipe {
         return vegan;
     }
 
+    @Override
+    public String toString() {
+        return "Recipe{" +
+                "cookingMinutes=" + cookingMinutes +
+                ", dairyFree=" + dairyFree +
+                ", glutenFree=" + glutenFree +
+                ", instructions='" + instructions + '\'' +
+                ", preparationMinutes=" + preparationMinutes +
+                ", pricePerServing=" + pricePerServing +
+                ", readyInMinutes=" + readyInMinutes +
+                ", servings=" + servings +
+                ", spoonacularScore=" + spoonacularScore +
+                ", title='" + title + '\'' +
+                ", vegan=" + vegan +
+                ", vegetarian=" + vegetarian +
+                '}';
+    }
+
     public Boolean getVegetarian() {
         return vegetarian;
     }

@@ -10,13 +10,20 @@ import org.springframework.web.bind.annotation.RestController;
 public class RecipeController {
 
     private RecipeService recipeService;
+    private  Recipe recipe;
 
-    public RecipeController(RecipeService recipeService){
+    public RecipeController(RecipeService recipeService, Recipe recipe){
         this.recipeService = recipeService;
+        this.recipe = recipe;
     }
 
     @GetMapping("/recipes")
     public String getRecipes() {
         return recipeService.getMessage();
+    }
+
+    @GetMapping("/recipe")
+    public String whatsInRecipes() {
+        return recipe.toString();
     }
 }
