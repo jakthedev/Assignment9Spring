@@ -1,70 +1,80 @@
 package com.coderscampus.demo.service;
 
 import com.coderscampus.demo.domain.Recipe;
+import com.coderscampus.demo.repository.RecipeRepository;
+
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.ArrayList;
+
 import java.util.List;
+
 
 @Service
 public class RecipeService {
 
-    private FileService fileService;
+    @Autowired
+    private RecipeRepository recipeRepo;
 
-    public String getMessage() {
-        return "Yo!";
-    }
+    private List<Recipe> collectAllRecipes () {
 
-    public static Recipe createRecipeData(Integer cookingMinutes, Boolean dairyFree, Boolean glutenFree, String instructions,
-                                          Double preparationMinutes, Double pricePerServing, Integer readyInMinutes, Integer servings,
-                                          Double spoonacularScore, String title, Boolean vegan, Boolean vegetarian) {
-        Recipe recipeInfo = new Recipe();
-        recipeInfo.setCookingMinutes(cookingMinutes);
-        recipeInfo.setDairyFree(dairyFree);
-        recipeInfo.setGlutenFree(glutenFree);
-        recipeInfo.setInstructions(instructions);
-        recipeInfo.setPreparationMinutes(preparationMinutes);
-        recipeInfo.setPricePerServing(pricePerServing);
-        recipeInfo.setReadyInMinutes(readyInMinutes);
-        recipeInfo.setServings(servings);
-        recipeInfo.setSpoonacularScore(spoonacularScore);
-        recipeInfo.setTitle(title);
-        recipeInfo.setVegan(vegan);
-        recipeInfo.setVegetarian(vegetarian);
-        return recipeInfo;
-    }
+        CSVFormat csvFormat = CSVFormat.DEFAULT.withDelimiter(',')
+                .withEscape('\\')
+                .withHeader("Cooking Minutes", "Dairy Free", "Gluten Free", "Instructions", "Preparation Minutes",
+                        "Price Per Serving", "Ready In Minutes", "Servings", "Spoonacular Score", "Title", "Vegan",
+                        "Vegetarian")
+                .withSkipHeaderRecord()
+                .withIgnoreSurroundingSpaces();
 
-
-    public List<Recipe> readRecipes(String filename) throws FileNotFoundException, IOException {
-        try {
-            //List<String> Reader = fileService.readFile("recipe.txt");
-            //Reader in = new FileReader(filename);
-
-            List<Recipe> recipes = new ArrayList<>(); 
-            Recipe recipeObj = new Recipe();
-
-            // Read the CSV file into a list of CSV records.
-            Iterable<CSVRecord> records = CSVFormat.DEFAULT.withIgnoreSurroundingSpaces().parse(new FileReader(filename));
-
-            // For each CSV record, create a new Recipe object and add it to the list of recipes.
+        try (Reader in = new FileReader("recipe.txt"))
+        {
+            Iterable<CSVRecord> records = csvFormat.parse(in);
             for (CSVRecord record : records) {
-                
+                Integer cookingMinutes = Integer.parseInt(record.get("Cooking Minutes"));
+                Boolean dairyFree = Boolean.parseBoolean(record.get("Dairy Free"));
+                Boolean glutenFree = Boolean.parseBoolean(record.get("Gluten Free"));
+                String instructions = record.get("Instructions");
+                Double prepMin = Double.parseDouble(record.get("Preparation Minutes"));
+                Double price = Double.parseDouble(record.get("Price Per Serving"));
+                Integer readyInMin = Integer.parseInt(record.get("Ready In Minutes"));
+                Integer servings = Integer.parseInt(record.get("Servings"));
+                Double score = Double.parseDouble(record.get("Spoonacular Score"));
+                String title = record.get("Title");
+                Boolean vegan = Boolean.parseBoolean(record.get("Vegan"));
+                Boolean vegetarian = Boolean.parseBoolean(record.get("Vegetarian"));
+
+                Recipe recipe = new Recipe();
+                recipe.setCookingMinutes(cookingMinutes);
+                recipe.setDairyFree(dairyFree);
+                recipe.setGlutenFree(glutenFree);
+                recipe.setInstructions(instructions);
+                recipe.setPreparationMinutes(prepMin);
+                recipe.setPricePerServing(price);
+                recipe.setReadyInMinutes(readyInMin);
+                recipe.setServings(servings);
+                recipe.setSpoonacularScore(score);
+                recipe.setTitle(title);
+                recipe.setVegan(vegan);
+                recipe.setVegetarian(vegetarian);
+
+                recipeRepo.getRecipes().add(recipe);
             }
 
-            return recipes;
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+        return recipeRepo.getRecipes(); 
+    }
 
-        } catch (FileNotFoundException ex) {
-            throw new RuntimeException(ex);
-        } catch (IOException ex) {
-            throw new RuntimeException(ex);
+    public List<Recipe> getAllRecipes () {
+        if (recipeRepo.getRecipes().size() == 0) {
+            return collectAllRecipes();
         }
+        return recipeRepo.getRecipes();
     }
 }

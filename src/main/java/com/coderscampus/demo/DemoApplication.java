@@ -10,22 +10,7 @@ import java.util.*;
 @SpringBootApplication
 public class DemoApplication {
 
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args)  {
 		SpringApplication.run(DemoApplication.class, args);
-
-		//FileController nunu = new FileController();
-//		FileService nene = new FileService();
-
-		//nunu.readLines();
-
-
-//		List<String> ArrNene = nene.readFile("recipe.txt");
-//
-//		for (String varNene : ArrNene ) {
-//			System.out.println(varNene);
-//		}
-
-
 	}
-
 }
